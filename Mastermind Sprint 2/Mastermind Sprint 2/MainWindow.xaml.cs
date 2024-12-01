@@ -4,6 +4,8 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Windows;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Mastermind
 {
@@ -42,6 +44,7 @@ namespace Mastermind
             historyPanel.Children.Clear();
             ResetAllColors();
         }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             countDown--;
@@ -299,6 +302,36 @@ namespace Mastermind
             int currentColorIndex = ellipseColor.IndexOf(clickedEllipse.Fill);
             int nextColorIndex = (currentColorIndex + 1) % ellipseColor.Count;
             clickedEllipse.Fill = ellipseColor[nextColorIndex];
+        }
+
+        // --------------------------- Closing Confirmation ---------------------------
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            
+            if (attempts < 10)
+            {
+                MessageBoxResult result = MessageBox.Show("Wilt u het spel vroegtijdig stoppen?",
+                                                          "QUITER????",
+                                                          MessageBoxButton.YesNo,
+                                                          MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                   
+                    base.OnClosing(e);
+                }
+                else
+                {
+                    
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+               
+                base.OnClosing(e);
+            }
         }
     }
 }
