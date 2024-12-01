@@ -105,6 +105,7 @@ namespace Mastermind
             }
 
             CheckGuess(selectedColors);
+            AddAttemptToHistory(selectedColors);
             StopCountDown();
         }
 
@@ -145,6 +146,30 @@ namespace Mastermind
             {
                 MessageBox.Show($"Proficiat! Je hebt de code gekraakt in {attempts} pogingen! Spel herstarten?", "WINNER WINNER CHICKEN DINNER", MessageBoxButton.OK);
             }
+        }
+
+        private void AddAttemptToHistory(string[] selectedColors)
+        {
+            StackPanel attemptPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+            for (int i = 0; i < selectedColors.Length; i++)
+            {
+                Ellipse colorBox = new Ellipse
+                {
+                    Width = 50,
+                    Height = 50,
+                    Fill = GetBrushFromColorName(selectedColors[i]),
+                    StrokeThickness = 5,
+                    Stroke = GetFeedbackBorder(selectedColors[i], i)
+                };
+                attemptPanel.Children.Add(colorBox);
+            }
+
+            historyPanel.Children.Add(attemptPanel);
         }
 
 
