@@ -106,6 +106,7 @@ namespace Mastermind
 
             CheckGuess(selectedColors);
             AddAttemptToHistory(selectedColors);
+            UpdateScoreLabel(selectedColors);
             StopCountDown();
         }
 
@@ -172,6 +173,34 @@ namespace Mastermind
             historyPanel.Children.Add(attemptPanel);
         }
 
+        private void UpdateScoreLabel(string[] selectedColors)
+        {
+            int scorePenalty = 0;
+
+            for (int i = 0; i < selectedColors.Length; i++)
+            {
+                if (selectedColors[i] == secretCode[i])
+                {
+                    // 0 penalty: correct color and position
+                    continue;
+                }
+                else if (secretCode.Contains(selectedColors[i]))
+                {
+                    // 1 penalty: correct color, wrong position
+                    scorePenalty += 1;
+                }
+                else
+                {
+                    // 2 penalties: color not in code
+                    scorePenalty += 2;
+                }
+            }
+
+            totalScore -= scorePenalty;
+            if (totalScore < 0) totalScore = 0; // Ensure score doesn't go negative
+
+            scoreLabel.Text = $"Score: {totalScore}";
+        }
 
         private void UpdateTitle()
         {
