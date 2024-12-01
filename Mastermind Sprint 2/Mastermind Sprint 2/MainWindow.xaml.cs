@@ -145,7 +145,15 @@ namespace Mastermind
 
             if (correctPosition == 4)
             {
-                MessageBox.Show($"Proficiat! Je hebt de code gekraakt in {attempts} pogingen! Spel herstarten?", "WINNER WINNER CHICKEN DINNER", MessageBoxButton.OK);
+                if (MessageBox.Show($"Proficiat! Je hebt de code gekraakt in {attempts} pogingen! Spel herstarten?", "WINNER WINNER CHICKEN DINNER", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                {
+                    InitializeGame();
+                }
+                else
+                {
+                    Application.Current.Shutdown();
+                }
+                return;
             }
         }
 
