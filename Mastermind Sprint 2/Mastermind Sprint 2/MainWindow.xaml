@@ -2,33 +2,39 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Mastermind"
-        Title="Mastermind" Height="450" Width="600">
-    <Grid>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <!-- Timer Display -->
-            <TextBlock x:Name="timerCounter" FontSize="20" HorizontalAlignment="Center" Margin="10" />
+        Title="Mastermind" Height="500" Width="600">
+    <Grid Background="Black">
+        <!-- Timer Display -->
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
+            <TextBlock Text="Time Left:" FontSize="20" Foreground="White" Margin="5" />
+            <TextBlock x:Name="timerCounter" FontSize="24" Foreground="Red" FontWeight="Bold" Margin="5" />
+        </StackPanel>
 
+        <!-- Main Game Area -->
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,80,0,0">
             <!-- Color Selection -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Ellipse x:Name="kleur1" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown"/>
-                <Ellipse x:Name="kleur2" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown"/>
-                <Ellipse x:Name="kleur3" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown"/>
-                <Ellipse x:Name="kleur4" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown"/>
+                <Ellipse x:Name="kleur1" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown" Margin="5"/>
+                <Ellipse x:Name="kleur2" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown" Margin="5"/>
+                <Ellipse x:Name="kleur3" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown" Margin="5"/>
+                <Ellipse x:Name="kleur4" Width="50" Height="50" Fill="Gray" Stroke="Transparent" MouseDown="color_MouseDown" Margin="5"/>
             </StackPanel>
 
             <!-- Control Button -->
-            <Button Content="Check Guess" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ControlButton_Click" Margin="10" />
+            <Button Content="Check Guess" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ControlButton_Click" Margin="10" Width="120" Height="35" 
+                    Background="CornflowerBlue" Foreground="White" FontSize="16" BorderBrush="DarkBlue" BorderThickness="2"/>
 
             <!-- Score Label -->
-            <TextBlock x:Name="scoreLabel" FontSize="16" HorizontalAlignment="Center" Margin="10"/>
+            <TextBlock x:Name="scoreLabel" FontSize="16" Foreground="White" HorizontalAlignment="Center" Margin="10" />
 
             <!-- History Panel -->
-            <StackPanel x:Name="historyPanel" VerticalAlignment="Top" Margin="10">
+            <TextBlock x:Name="historyLabel" Text="Previous Guesses" FontSize="18" Foreground="White" HorizontalAlignment="Center" Margin="10"/>
+            <StackPanel x:Name="historyPanel" VerticalAlignment="Top" Margin="10" HorizontalAlignment="Center">
+                <!-- History of attempts will be added here -->
             </StackPanel>
 
             <!-- Cheat Code (Debug) -->
-            <TextBlock x:Name="cheatCode" HorizontalAlignment="Center" Visibility="Hidden" Margin="10" />
-
+            <TextBlock x:Name="cheatCode" HorizontalAlignment="Center" Visibility="Hidden" Margin="10" FontSize="14" Foreground="White"/>
         </StackPanel>
     </Grid>
 </Window>
