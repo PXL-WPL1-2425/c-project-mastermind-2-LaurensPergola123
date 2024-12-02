@@ -31,6 +31,22 @@ namespace Mastermind
 
         private void InitializeGame()
         {
+            MessageBox.Show(
+                 "### Spelregels Mastermind\n\n" +
+                 "1. Doel van het spel: Raad de geheime kleurcode bestaande uit 4 kleuren.\n" +
+                 "2. Kleuren: Je kunt kiezen uit 6 kleuren: Rood, Geel, Oranje, Wit, Groen en Blauw.\n" +
+                 "3. Beurten: Je hebt 10 pogingen om de code te raden.\n" +
+                 "4. Feedback:\n" +
+                 "- Rode kleur: Juiste kleur op de juiste plaats.\n" +
+                 "- Witte kleur: Juiste kleur, maar verkeerde plaats.\n" +
+                 "- Geen kleur: Kleur komt niet voor in de code.\n" +
+                 "5. Tijdslimiet: Elke beurt heeft 10 seconden om een gok in te dienen.\n" +
+                 "6. Score: Elke fout verlaagt je score. Het doel is om de code te raden met de hoogste score.\n\n" +
+                 "Veel succes!",
+                 "Welkom bij Mastermind!",
+                 MessageBoxButton.OK,
+                 MessageBoxImage.Information
+             );
             Random number = new Random();
             secretCode = Enumerable.Range(0, 4)
                              .Select(_ => colors[number.Next(colors.Length)])
@@ -74,9 +90,9 @@ namespace Mastermind
 
         private void StopCountDown()
         {
-            timer.Stop(); // Stop the timer before resetting
+            timer.Stop();
             countDown = 10;
-            timer.Start(); // Start the timer again
+            timer.Start();
         }
 
         private void GameOver()
@@ -108,47 +124,67 @@ namespace Mastermind
             }
 
             CheckGuess(selectedColors);
-            AddAttemptToHistory(selectedColors);
             UpdateScoreLabel(selectedColors);
             StopCountDown();
+            
         }
-
         private void CheckGuess(string[] selectedColors)
         {
             int correctPosition = 0;
             int correctColor = 0;
 
+           
             List<string> tempSecretCode = new List<string>(secretCode);
             List<string> tempPlayerGuess = new List<string>(selectedColors);
 
-            // Step 1: Check correct positions (color and position)
-            for (int i = 0; i < 4; i++)
+            
+            List<Brush> feedbackBorders = new List<Brush>();
+
+            
+            for (int i = 0; i < tempPlayerGuess.Count; i++)
             {
                 if (tempPlayerGuess[i] == tempSecretCode[i])
                 {
                     correctPosition++;
-                    tempSecretCode[i] = null;
-                    tempPlayerGuess[i] = null;
+                    feedbackBorders.Add(Brushes.DarkRed);  
+                    tempSecretCode[i] = null;  
+                    tempPlayerGuess[i] = null;  
+                }
+                else
+                {
+                    feedbackBorders.Add(null);  
                 }
             }
-
-            // Step 2: Check correct colors (wrong position)
-            for (int i = 0; i < 4; i++)
+            
+            for (int i = 0; i < tempPlayerGuess.Count; i++)
             {
-                if (tempPlayerGuess[i] != null)
+                if (tempPlayerGuess[i] != null && tempSecretCode.Contains(tempPlayerGuess[i]))
                 {
-                    int index = tempSecretCode.IndexOf(tempPlayerGuess[i]);
-                    if (index != -1)
+                   
+                    int indexInSecretCode = tempSecretCode.IndexOf(tempPlayerGuess[i]);
+
+                    
+                    if (indexInSecretCode >= 0)
                     {
-                        correctColor++;
-                        tempSecretCode[index] = null;
+                        feedbackBorders[i] = Brushes.Wheat; 
+                        tempSecretCode[indexInSecretCode] = null;  
                     }
+                }
+            }
+            
+            for (int i = 0; i < tempPlayerGuess.Count; i++)
+            {
+                if (feedbackBorders[i] == null)  
+                {
+                    feedbackBorders[i] = Brushes.Transparent;  
                 }
             }
 
             if (correctPosition == 4)
             {
-                if (MessageBox.Show($"Proficiat! Je hebt de code gekraakt in {attempts} pogingen! Spel herstarten?", "WINNER WINNER CHICKEN DINNER", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                timer.Stop();
+                if (MessageBox.Show($"Proficiat! Je hebt de code gekraakt in {attempts} pogingen!\rSpel herstarten?",
+                                    "WINNER WINNER CHICKEN DINNER", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                 {
                     InitializeGame();
                 }
@@ -156,11 +192,11 @@ namespace Mastermind
                 {
                     Application.Current.Shutdown();
                 }
-                return;
             }
-        }
 
-        private void AddAttemptToHistory(string[] selectedColors)
+            AddAttemptToHistory(selectedColors, feedbackBorders); 
+        }
+        private void AddAttemptToHistory(string[] selectedColors, List<Brush> feedbackBorders)
         {
             StackPanel attemptPanel = new StackPanel
             {
@@ -176,14 +212,13 @@ namespace Mastermind
                     Height = 50,
                     Fill = GetBrushFromColorName(selectedColors[i]),
                     StrokeThickness = 5,
-                    Stroke = GetFeedbackBorder(selectedColors[i], i)
+                    Stroke = feedbackBorders[i] 
                 };
                 attemptPanel.Children.Add(colorBox);
             }
 
             historyPanel.Children.Add(attemptPanel);
         }
-
         private void UpdateScoreLabel(string[] selectedColors)
         {
             int scorePenalty = 0;
@@ -192,17 +227,17 @@ namespace Mastermind
             {
                 if (selectedColors[i] == secretCode[i])
                 {
-                    // 0 penalty: correct color and position
+                   
                     continue;
                 }
                 else if (secretCode.Contains(selectedColors[i]))
                 {
-                    // 1 penalty: correct color, wrong position
+                    
                     scorePenalty += 1;
                 }
                 else
                 {
-                    // 2 penalties: color not in code
+                   
                     scorePenalty += 2;
                 }
             }
@@ -260,15 +295,15 @@ namespace Mastermind
         {
             if (color == secretCode[index])
             {
-                return Brushes.DarkRed; // Correct color and position
+                return Brushes.DarkRed;
             }
             else if (secretCode.Contains(color))
             {
-                return Brushes.Wheat; // Correct color, wrong position
+                return Brushes.Wheat;
             }
             else
             {
-                return Brushes.Transparent; // Incorrect color
+                return Brushes.Transparent;
             }
         }
 
@@ -308,7 +343,7 @@ namespace Mastermind
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            
+            StopCountDown();
             if (attempts < 10)
             {
                 MessageBoxResult result = MessageBox.Show("Wilt u het spel vroegtijdig stoppen?",
@@ -323,7 +358,7 @@ namespace Mastermind
                 }
                 else
                 {
-                    
+                   timer.Start();
                     e.Cancel = true;
                 }
             }
